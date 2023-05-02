@@ -99,6 +99,24 @@ trait SpatialTrait
         return $insert; //Return the result of the parent insert
     }
 
+    protected function performUpdate(EloquentBuilder $query, array $options = [])
+    {
+        foreach ($this->attributes as $key => $value) {
+            if ($value instanceof GeometryInterface) {
+                $this->geometries[$key] = $value; //Preserve the geometry objects prior to the update
+                $this->attributes[$key] = new SpatialExpression($value);
+            }
+        }
+
+        $update = parent::performUpdate($query, $options);
+
+        foreach ($this->geometries as $key => $value) {
+            $this->attributes[$key] = $value; //Retrieve the geometry objects so they can be used in the model
+        }
+
+        return $update; //Return the result of the parent update
+    }
+
     public function setRawAttributes(array $attributes, $sync = false)
     {
         $spatial_fields = $this->getSpatialFields();
