@@ -89,7 +89,7 @@ class MultiPolygon extends GeometryCollection
         return $polygons;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->validateItemType($value);
 
